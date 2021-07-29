@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/bhopro/Desktop/Berkeley/MSOL/Projects/initializeParticlesCPP/main.cpp
+iostream
+-
+cmath
+-
+fstream
+-
+ctime
+-
+
