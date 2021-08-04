@@ -25,20 +25,62 @@ const int nParticles{1000};
 std::ofstream printParticles;
 std::ofstream printDiameters;
 
+// function declarations
+
+std::vector<double> initParticles(std::vector<double>&);
+// initialize particles
+// @param pass in vector rstate -> [x1, y1, d1, x2, y2, d2, ... dn]
+
+
 int main() {
     auto start = std::chrono::high_resolution_clock::now();
     std::cout << "xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax << std::endl;
 
+
+    std::vector< double > rstate_;                                   // state matrix [x, y, diameter]
+    double packingDensity;
+
+    rstate_ = initParticles(rstate_);
+
+
+
+    // Compute packing density
+    for (int i=0; i<nParticles; i += 3){
+        packingDensity += M_PI * pow((rstate_[i + 2] / 2), 2);
+    }
+    packingDensity = packingDensity / areaNozzle;
+    std::cout << "packing density: " << packingDensity << std::endl;
+
+    // computational time
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = (std::chrono::duration_cast<std::chrono::microseconds>(stop - start)).count() / 1e6;
+    std::cout << "computational time: " << duration << "s" << std::endl;
+    std::cout << "total particles: " << rstate_.size() / 3.0 << std::endl;
+
+    // write to file
+    printParticles.open("/Users/bhopro/Desktop/Berkeley/MSOL/Projects/initializeParticlesCPP/particlePosition.dat");
+    printParticles << "X" << "," << "Y" << "," << "D" << std::endl;
+
+
+    for (int particle=0; particle<rstate_.size(); particle += 3){
+        printParticles << rstate_[particle + 0] << "," << rstate_[particle + 1] << "," << rstate_[particle + 2] << std::endl;
+//        std::cout << rstate_[particle + 0] << " " << rstate_[particle + 1] << " " << rstate_[particle + 2] << std::endl;
+    }
+
+    printParticles.close();
+
+    return 0;
+}
+
+// Function definitions
+std::vector<double> initParticles(std::vector<double>& rstate){
+
+    // variable declaration
     double randPosX;                                                // new random position
     double randPosY;                                                // new random position
     double randDiam;                                                // new random diameter
-    std::vector< double > rstate;                                   // state matrix [x, y, diameter]
-    double packingDensity;
-
-
 
     // initialize random positions in state matrix
-
     randDiam = ((double) rand() / RAND_MAX) * (dparticleL - dparticleS) + dparticleS;
     rstate.push_back(((double) rand() / RAND_MAX) * (xmax - xmin - randDiam / 2) + xmin + randDiam / 2);
     rstate.push_back(((double) rand() / RAND_MAX) * (ymax - ymin - randDiam / 2) + ymin + randDiam / 2);
@@ -100,34 +142,7 @@ int main() {
             }
         }
     }
-
-    // Compute packing density
-
-    for (int i=0; i<nParticles; i += 3){
-        packingDensity += M_PI * pow((rstate[i + 2] / 2), 2);
-    }
-    packingDensity = packingDensity / areaNozzle;
-    std::cout << "packing density: " << packingDensity << std::endl;
-
-    // computational time
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = (std::chrono::duration_cast<std::chrono::microseconds>(stop - start)).count() / 1e6;
-    std::cout << "computational time: " << duration << "s" << std::endl;
-    std::cout << "total particles: " << rstate.size() / 3.0 << std::endl;
-
-    // write to file
-    printParticles.open("/Users/bhopro/Desktop/Berkeley/MSOL/Projects/initializeParticlesCPP/particlePosition.dat");
-    printParticles << "X" << "," << "Y" << "," << "D" << std::endl;
-
-
-    for (int particle=0; particle<rstate.size(); particle += 3){
-        printParticles << rstate[particle + 0] << "," << rstate[particle + 1] << "," << rstate[particle + 2] << std::endl;
-//        std::cout << rstate[particle + 0] << " " << rstate[particle + 1] << " " << rstate[particle + 2] << std::endl;
-    }
-
-    printParticles.close();
-
-    return 0;
+    return rstate;
 }
 
 /* ARRAY METHOD */
