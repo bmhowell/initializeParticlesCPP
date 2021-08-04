@@ -14,6 +14,8 @@ xmax = 0.000797143
 ymin = 6.2e-5
 ymax = 0.001674
 
+print(len(xpos))
+
 # plot particle locations
 plt.figure(figsize=(5, 5))
 plt.scatter(xpos, ypos)
